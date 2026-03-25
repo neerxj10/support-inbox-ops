@@ -234,4 +234,3 @@ openenv validate
 - [app/server.py](/Users/neerajkoushik/Documents/OpenENV/app/server.py): FastAPI endpoints
 - [scripts/smoke_test.py](/Users/neerajkoushik/Documents/OpenENV/scripts/smoke_test.py): local smoke test
 - [Makefile](/Users/neerajkoushik/Documents/OpenENV/Makefile): common local commands
-
