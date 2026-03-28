@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import FastAPI, HTTPException
 
 from app.baseline import run_baseline
-from app.env import SupportInboxEnv
+from app.env import SupportInboxEnv, UnknownTaskError
 from app.graders import grade_episode
 from app.models import (
     AgentAction,
@@ -33,7 +33,10 @@ def healthz() -> dict[str, str]:
 
 @app.post("/reset", response_model=Observation)
 def reset(request: ResetRequest | None = None) -> Observation:
-    return env.reset(request)
+    try:
+        return env.reset(request)
+    except UnknownTaskError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @app.post("/step", response_model=StepResult)

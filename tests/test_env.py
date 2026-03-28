@@ -33,6 +33,13 @@ def test_reset_produces_clean_state() -> None:
     assert all(ticket.status == "new" for ticket in refreshed.tickets)
 
 
+def test_reset_rejects_unknown_task_id() -> None:
+    client = TestClient(app)
+    response = client.post("/reset", json={"task_id": "does_not_exist"})
+    assert response.status_code == 400
+    assert "Unknown task_id" in response.json()["detail"]
+
+
 def test_partial_progress_reward_signal() -> None:
     env = SupportInboxEnv()
     env.reset(ResetRequest(task_id="easy_password_reset"))

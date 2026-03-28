@@ -22,6 +22,10 @@ from app.models import (
 from app.tasks import TASKS
 
 
+class UnknownTaskError(ValueError):
+    """Raised when a task ID is not defined in the environment."""
+
+
 ALLOWED_ACTIONS = [
     ActionType.classify_ticket,
     ActionType.respond_ticket,
@@ -37,7 +41,10 @@ class SupportInboxEnv:
         self._load_task(default_task_id)
 
     def _load_task(self, task_id: str) -> None:
-        task = TASKS[task_id]
+        task = TASKS.get(task_id)
+        if task is None:
+            valid_task_ids = ", ".join(sorted(TASKS))
+            raise UnknownTaskError(f"Unknown task_id '{task_id}'. Valid task_ids: {valid_task_ids}.")
         self.task = task
         self.task_id = task.task_id
         self.step_count = 0
@@ -227,4 +234,3 @@ class SupportInboxEnv:
             progress_score=self._progress_score(),
             recent_events=self.event_log[-5:],
         )
-
